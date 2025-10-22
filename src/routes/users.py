@@ -1,9 +1,16 @@
 from fastapi import APIRouter, Depends
 from src.db_session import get_db
 
-from src.routes.dtos.user import CreateUserInputDTO, CreateUserResponseDTO, LoginUserInputDTO, LoginUserResponseDTO
+from src.routes.dtos.user import (
+    CreateUserInputDTO, 
+    CreateUserResponseDTO, 
+    LoginUserInputDTO, 
+    LoginUserResponseDTO,
+    ResetPasswordInputDTO
+)
 from src.use_cases.create_user import create_user_use_case
 from src.use_cases.login_user import login_user_use_case
+from src.use_cases.reset_password import reset_password_use_case
 
 user_router = APIRouter()
 
@@ -54,3 +61,14 @@ async def login(request_data: LoginUserInputDTO, db_session=Depends(get_db)):
     except Exception as e:
         raise e 
     
+@user_router.post("/reset-password")
+async def reset_password(request_data: ResetPasswordInputDTO, db_session=Depends(get_db)):
+    try:
+        response = await reset_password_use_case(
+            email=request_data.email,
+            new_password=request_data.new_password,
+            db_session=db_session
+        )
+        return response
+    except Exception as e:
+        raise e

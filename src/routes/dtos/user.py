@@ -22,3 +22,7 @@ class LoginUserInputDTO(BaseModel):
 
 class LoginUserResponseDTO(CreateUserResponseDTO):
     ...
+
+class ResetPasswordInputDTO(BaseModel):
+    email: str
+    new_password: str
