@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 
+from src.exceptions.user_exceptions import UserNotFound
+
 from .get_user_by_email import get_user_by_email_use_case
 
 async def reset_password_use_case(
@@ -8,8 +10,9 @@ async def reset_password_use_case(
 		db_session: Session
 	):
 		user = await get_user_by_email_use_case(email, db_session)
+	
 		if not user:
-			raise Exception("User not found")
+			raise UserNotFound(email=email)
 
 		user.password = new_password
 

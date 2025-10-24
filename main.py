@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.routes.handler_exceptions import register_exception_handler
 from src.routes.users import user_router
  
 app = FastAPI(title="Simple FastAPI Backend")
@@ -14,5 +15,7 @@ app.add_middleware(
 			allow_methods=["*"],
 			allow_headers=["*"],
 		)
+register_exception_handler(app)
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
