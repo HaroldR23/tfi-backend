@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from src.exceptions.user_exceptions import UserNotFound
 from src.db_session import get_db
 
 from src.routes.dtos.user import (
@@ -11,6 +12,7 @@ from src.routes.dtos.user import (
 from src.use_cases.create_user import create_user_use_case
 from src.use_cases.login_user import login_user_use_case
 from src.use_cases.reset_password import reset_password_use_case
+from src.use_cases.get_user_by_email import get_user_by_email_use_case
 
 user_router = APIRouter()
 
@@ -70,5 +72,16 @@ async def reset_password(request_data: ResetPasswordInputDTO, db_session=Depends
             db_session=db_session
         )
         return response
+    except Exception as e:
+        raise e
+
+@user_router.get("/users/{user_email}")
+async def get_user(user_email: str, db_session=Depends(get_db)):
+    try:
+        user = await get_user_by_email_use_case(email=user_email, db_session=db_session)
+
+        if not user:
+            raise UserNotFound(email=user_email)
+        return user
     except Exception as e:
         raise e
